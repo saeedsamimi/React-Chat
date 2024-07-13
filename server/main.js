@@ -2,10 +2,11 @@ require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
-const security = require("./security");
+const security = require("./security/security");
 const multer = require("multer");
 const pool = require("./database/db");
 const cookieParser = require('cookie-parser')
+const {resolve, extname} = require("node:path");
 
 const app = express();
 
@@ -20,7 +21,18 @@ else app.use(cors({
 
 app.use(express.json())
 app.use(cookieParser())
-const upload = multer();
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, resolve(__dirname, 'public'));
+    },
+    filename: (req, file, cb) => {
+        const UID = Date.now()
+        cb(null, UID + extname(file.originalname));
+    }
+})
+
+const upload = multer({storage: storage});
 const uploadNone = upload.none()
 
 app.post("/signup", uploadNone, async (req, res) => {
@@ -68,7 +80,7 @@ app.post("/login", uploadNone, async (req, res) => {
 
 app.post("/auth", async (req, res) => {
     try {
-        const userFoundation = "SELECT id,username,name FROM users WHERE id = $1 LIMIT 1";
+        const userFoundation = "SELECT * FROM users WHERE id = $1 LIMIT 1";
         const id = await security.authenticateToken(req.cookies.token);
         const user = await pool.query(userFoundation, [id])
         if (user.rows.length === 0)
@@ -98,7 +110,7 @@ app.post("/rename", async (req, res) => {
         if (!name)
             res.sendStatus(403);
         else {
-            const userRename = "UPDATE users SET name = $1 WHERE id = $2 RETURNING id,username,name"
+            const userRename = "UPDATE users SET name = $1 WHERE id = $2 RETURNING *"
             const id = await security.authenticateToken(req.cookies.token)
             const user = await pool.query(userRename, [name, id])
             res.status(200).send(user.rows[0])
@@ -109,9 +121,19 @@ app.post("/rename", async (req, res) => {
     }
 })
 
-app.get("/", (req, res) => {
-    res.send("Hello World!");
+app.post("/profile", upload.single('profile'), async (req, res) => {
+    try {
+        const id = await security.authenticateToken(req.cookies.token)
+        const updateProfile = "UPDATE users SET profile = $1 WHERE id = $2 RETURNING *"
+        const result = await pool.query(updateProfile, [req.file.filename, id]);
+        res.status(200).send(result.rows[0]);
+    } catch (err) {
+        console.error(err)
+        res.sendStatus(500)
+    }
 })
+
+app.use('/pictures', express.static(resolve(__dirname, 'public')))
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

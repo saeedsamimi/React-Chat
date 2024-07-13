@@ -22,6 +22,14 @@
   @extend .p-2;
 }
 
+.icon{
+  @extend .ratio;
+  @extend .ratio-1x1;
+  max-width: 300px;
+  max-height: 300px;
+  margin: auto;
+}
+
 // Required
 @import "bootstrap/scss/variables";
 @import "bootstrap/scss/variables-dark";
