@@ -18,9 +18,9 @@ export const UserSchema = new Schema<IUser, IUserDocument>({
 	},
 	{
 		toJSON: {
+			versionKey: false,
 			transform: (doc, ret, opt) => {
 				delete ret['password']
-				delete ret['__v']
 				return ret
 			}
 		}
@@ -35,4 +35,4 @@ UserSchema.methods.verifyPassword = function(input: string) {
 	return verify(input, this.password)
 }
 
-export const User = model('User', UserSchema)
+export const User = model<IUser>('User', UserSchema)

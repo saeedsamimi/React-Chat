@@ -1,6 +1,5 @@
 import { Model } from 'mongoose';
 import { Request, Response, NextFunction } from 'express';
-import { User } from '../../models/user';
 
 export default function CreateAndSave(model: Model<any>) {
 	return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {

@@ -5,3 +5,4 @@ server/public
 server/RSA/*.pem
 server/logs
 server/build
+postman

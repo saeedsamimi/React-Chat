@@ -37,7 +37,7 @@ const loginSingingFormDetails: FormDetails[] = [
 export default function LoginSigningForm(props: LoginSigningFormProps) {
 	const [username, usernameChanged] = useInput()
 	const [password, passwordChange] = useInput()
-	const { login, loading,loggedIn } = useAuth()
+	const { login, loading, loggedIn } = useAuth()
 	const navigate = useNavigate()
 	const details = loginSingingFormDetails[props.isLogin ? 1 : 0]
 	const otherDetails = loginSingingFormDetails[props.isLogin ? 0 : 1]
@@ -45,11 +45,11 @@ export default function LoginSigningForm(props: LoginSigningFormProps) {
 	const handleSubmit = useCallback((e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
 		login(new FormData(e.currentTarget), details.location)
-		navigate('/dashboard');
-	}, [props.isLogin,navigate])
+		navigate('/dashboard')
+	}, [navigate, details.location, login])
 
-	if(loggedIn){
-		return <Navigate to={'/dashboard'} replace/>
+	if (loggedIn) {
+		return <Navigate to={'/dashboard'} replace />
 	}
 
 	return (
