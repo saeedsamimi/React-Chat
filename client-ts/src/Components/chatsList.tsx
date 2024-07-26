@@ -8,7 +8,7 @@ interface ChatsListProps {
 
 export default function ChatsList(props: ChatsListProps) {
 	const RenderChats = () => {
-		return props.chats.map((item,i) => (
+		return props.chats.map((item, i) => (
 			<div key={i}>
 				<li aria-selected={i === props.currentChatIndex}
 				    className={(i === props.currentChatIndex ? 'border-l-black border-l-4' : '') + ' ps-4 py-3 hover:bg-pink-200 active:bg-pink-300'}
