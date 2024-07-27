@@ -32,10 +32,10 @@ interface ServerToClientEvents {
 		(data: ProjectionType<IConversation>[] // the related chats for the user
 		) => void;
 	userGetOnline:
-		(data: Types.ObjectId                  // the online user document
+		(data: ProjectionType<IUserDocument>   // the online user document
 		) => void;
 	userGetOffline:
-		(data: Types.ObjectId                  // the objectId of the offline user
+		(data: ProjectionType<IUserDocument>   // the objectId of the offline user
 		) => void;
 	participantAdded:
 		(data: participantAddedData            // the added participant data

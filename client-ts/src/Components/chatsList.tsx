@@ -1,4 +1,5 @@
 import Conversation from '../types/conversation'
+import { PlusCircleIcon } from '@heroicons/react/24/solid'
 
 interface ChatsListProps {
 	chats: Conversation[];
@@ -18,13 +19,21 @@ export default function ChatsList(props: ChatsListProps) {
 	}
 
 	return (
-		<section className="flex flex-col bg-pink-100 row-span-2 rounded-lg contain-paint ">
+		<section className="relative flex flex-col bg-pink-100 row-span-2 rounded-lg contain-paint ">
 			<div className="bg-pink-900 w-full p-4 text-white">
-				Chat Page
+				Conversations
 			</div>
 			<ul className="flex flex-col divide-y divide-gray-400 list-none">
 				<RenderChats />
 			</ul>
+			<button
+				className="absolute shadow-lg bg-pink-600 inline-flex rounded-full w-fit h-10 bottom-5 right-5 p-2 items-center group active:text-gray-800">
+      <span
+	      className="transition-all duration-300 ease-in-out max-w-0 opacity-0 overflow-hidden group-hover:max-w-xs group-hover:opacity-100 px-0 group-hover:px-2">
+        Create Conversation
+      </span>
+				<PlusCircleIcon height={30}/>
+			</button>
 		</section>
 	)
 }

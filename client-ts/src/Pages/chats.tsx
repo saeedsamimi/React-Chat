@@ -1,21 +1,20 @@
-import { createRef, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import socket from '../socket/socketManager'
 import ChatsList from '../components/chatsList'
 import Conversation from '../types/conversation'
 import MessageBox from '../components/messageBox'
 import MessagesList from '../components/messagesList'
+import ConversationMenu from '../components/conversationMenu'
+import useToggle from '../hooks/useToggle'
+import UsersList from '../components/usersList'
+import User from '../types/user'
 
 export default function Chats() {
 	const [socketConnected, setSocketConnected] = useState(socket.connected)
 	const [initialMessage, setInitialMessage] = useState<Conversation[]>([])
 	const [selectedChatIndex, setSelectedChatIndex] = useState(-1)
-	const messagesListRef = createRef<HTMLDivElement>()
 	const [notified, setNotified] = useState<boolean>(false)
-
-	useEffect(() => {
-		if (notified)
-			messagesListRef.current.scrollTo({ top: messagesListRef.current.scrollHeight, behavior: 'smooth' })
-	}, [messagesListRef, notified])
+	const userList = useToggle(false)
 
 	useEffect(() => {
 		if (!socketConnected) {
@@ -39,23 +38,36 @@ export default function Chats() {
 			setNotified(true)
 		}
 
+		const userGetOnline = (user: User) => {
+			console.log(JSON.stringify(user))
+		}
+
+		const userGetOffline = (user: User) => {
+			console.log(JSON.stringify(user))
+		}
+
 		socket.on('connect', connect)
 		socket.on('disconnect', disconnect)
 		socket.on('initChats', initialMessageEvent)
+		socket.on('userGetOnline', userGetOnline)
+		socket.on('userGetOffline', userGetOffline)
 
 		return () => {
 			socket.off('connect', connect)
 			socket.off('disconnect', disconnect)
 			socket.off('initChats', initialMessageEvent)
+			socket.off('userGetOnline', userGetOnline)
+			socket.off('userGetOffline', userGetOffline)
 		}
-	}, [selectedChatIndex, initialMessage, messagesListRef])
+	}, [selectedChatIndex, initialMessage])
+
+	const targetId = initialMessage[selectedChatIndex]?._id
 
 	useEffect(() => {
 		if (selectedChatIndex >= 0)
 			socket
-				.emitWithAck('getConversation', initialMessage[selectedChatIndex]._id)
+				.emitWithAck('getConversation', targetId)
 				.then((data) => {
-					console.log(data)
 					setInitialMessage((messages) => {
 						return messages.map((message, i) => {
 							if (i === selectedChatIndex) {
@@ -64,7 +76,9 @@ export default function Chats() {
 						})
 					})
 				})
-	}, [selectedChatIndex, initialMessage])
+	}, [targetId, selectedChatIndex])
+
+	const targetConversation = initialMessage[selectedChatIndex]
 
 	return (
 		<div
@@ -72,8 +86,18 @@ export default function Chats() {
 		>
 			<ChatsList chats={initialMessage} currentChatIndex={selectedChatIndex}
 			           onCurrentChatIndexChanged={setSelectedChatIndex} />
-			<section className="bg-pink-100 row-0 rounded-lg p-4 overflow-y-scroll max-h-[60vh]" ref={messagesListRef}>
-				<MessagesList conversation={initialMessage[selectedChatIndex]} />
+			<section
+				className="flex flex-col bg-pink-100 row-0 rounded-lg max-h-[60vh] contain-paint"
+			>
+				<div className="flex flex-row py-2 px-3 bg-pink-400 w-full items-center gap-2 shadow-md">
+					<div className="rounded-full size-10 bg-gradient-to-bl from-blue-400 to-green-400"></div>
+					<a className="flex-grow text-xl" href="#">{targetConversation?.name || 'Chat Application'}</a>
+					{targetConversation && <ConversationMenu showUsers={userList.value} changeMode={userList.toggle} />}
+				</div>
+				{userList.value ?
+					<UsersList conversation={targetConversation} /> :
+					<MessagesList conversation={targetConversation} scrollBottom={notified} />
+				}
 			</section>
 			<section className="bg-pink-100 row-1 gap-2 rounded-lg p-4 inline-flex flex-row items-center">
 				<MessageBox />

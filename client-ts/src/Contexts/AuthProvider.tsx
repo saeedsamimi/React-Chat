@@ -1,6 +1,6 @@
-import { AuthContext } from './authContext.ts'
+import { AuthContext } from './authContext'
 import { ReactNode, useEffect, useState, useRef, useCallback } from 'react'
-import User from '../types/user.ts'
+import User from '../types/user'
 import axios from 'axios'
 
 export default function AuthProvider({ children }: { children: ReactNode }) {
@@ -19,9 +19,12 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 					.then((res) => {
 						setLoggedIn(true)
 						setUser(res.data.user)
+						setLoading(false)
 					})
-					.catch(console.error)
-					.finally(() => setLoading(false))
+					.catch((err) => {
+						console.error(err)
+						setLoading(false)
+					})
 			} else {
 				setLoading(false)
 			}

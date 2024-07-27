@@ -15,7 +15,7 @@ const SocketController = (socket: IOSocket, io?: IO) => {
 		if (rooms.length === 0) return
 		io?.sockets
 			.to(rooms)
-			.emit('userGetOnline', socket.data.user.id)
+			.emit('userGetOnline', socket.data.user)
 		socket.join(rooms)
 	})
 
@@ -64,7 +64,7 @@ const SocketController = (socket: IOSocket, io?: IO) => {
 			.then((conversations) => {
 				if (conversations.length >= 0) {
 					const rooms = conversations.map((conversation) => conversation.id)
-					io?.sockets.to(rooms).emit('userGetOffline', socket.data.user.id)
+					io?.sockets.to(rooms).emit('userGetOffline', socket.data.user)
 				}
 			})
 	})
