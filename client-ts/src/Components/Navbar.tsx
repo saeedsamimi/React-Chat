@@ -1,13 +1,8 @@
 import Logo from '../assets/chat-50.png'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { Dialog, DialogPanel } from '@headlessui/react'
-
-const navigation = [
-	{ name: 'Product', href: '/products' },
-	{ name: 'Features', href: '#' },
-	{ name: 'Marketplace', href: '#' },
-	{ name: 'Company', href: '#' }
-]
+import { ROUTES } from '../constants'
+import { useLocation } from 'react-router-dom'
 
 export interface NavbarProps {
 	opened: boolean;
@@ -16,6 +11,7 @@ export interface NavbarProps {
 }
 
 export default function Navbar(props: NavbarProps) {
+	const location = useLocation()
 	return (
 		<>
 			<nav aria-label="Global" className="flex bg-pink-400 items-center justify-between p-6 lg:px-8 shadow-md">
@@ -34,8 +30,10 @@ export default function Navbar(props: NavbarProps) {
 					</button>
 				</div>
 				<div className="hidden lg:flex lg:gap-x-12">
-					{navigation.map((item, index) => (
-						<a key={index} href={item.href} className="text-sm font-semibold leading-6 text-gray-900">
+					{ROUTES.map((item, index) => (
+						<a key={index}
+						   href={item.href}
+						   className={"text-sm font-semibold leading-6 text-gray-900 " + (location.pathname === item.href ? 'border-b-2 border-b-black' : '')}>
 							{item.name}
 						</a>
 					))}
@@ -71,7 +69,7 @@ export default function Navbar(props: NavbarProps) {
 					<div className="mt-6 px-6 flow-root">
 						<div className="-my-6 divide-y divide-pink-500/30">
 							<div className="space-y-2 py-6">
-								{navigation.map((item) => (
+								{ROUTES.map((item) => (
 									<a
 										key={item.name}
 										href={item.href}

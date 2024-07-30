@@ -3,7 +3,7 @@ import useInput from '../hooks/useInput'
 import { Link, Navigate } from 'react-router-dom'
 import { FormEvent, useCallback } from 'react'
 import { useAuth } from '../hooks/useAuth'
-import Loading from './loading.tsx'
+import Loading from './loading'
 import { useNavigate } from 'react-router-dom'
 
 export interface LoginSigningFormProps {
@@ -75,7 +75,7 @@ export default function LoginSigningForm(props: LoginSigningFormProps) {
 							        className="peer w-full text-white bg-pink-600 hover:bg-pink-800 focus:outline-none active:ring-2 active:ring-pink-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 inline-flex items-center justify-center disabled:bg-pink-400"
 							        disabled={loading}
 							>
-								{loading && <Loading />}
+								{loading && <Loading size={100} background="#DB2777" foreground="#D1D5DB"/>}
 								{details.label}
 							</button>
 						</div>

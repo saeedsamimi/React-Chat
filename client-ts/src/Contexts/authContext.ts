@@ -1,5 +1,5 @@
 import { createContext, Dispatch, SetStateAction } from 'react'
-import User from '../types/user.ts'
+import User from '../types/user'
 
 export interface authContextProps {
 	loading: boolean;

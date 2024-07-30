@@ -13,7 +13,7 @@ export default function MainRoutes() {
 					<Route path="login" element={<LoginSigningForm isLogin={true} />} />
 					<Route path="signin" element={<LoginSigningForm isLogin={false} />} />
 					<Route path="dashboard" element={<ProtectedRoute Component={Dashboard} />} />
-					<Route path="chats" element={<ProtectedRoute Component={Chats}/>}/>
+					<Route path="chats" element={<ProtectedRoute Component={Chats} />} />
 				</Route>
 			</Routes>
 		</Router>

@@ -1,5 +1,5 @@
 import Conversation from '../types/conversation'
-import Message from '../types/message'
+import type Message from '../types/message'
 import { forwardRef, createRef, useEffect } from 'react'
 import { InformationCircleIcon } from '@heroicons/react/24/outline'
 import { useAuth } from '../hooks/useAuth'
@@ -16,7 +16,7 @@ interface MessageProps {
 
 const Message = forwardRef<HTMLDivElement, MessageProps>((props, ref) => {
 	const alignCSS = props.self ? 'ms-auto bg-pink-800' : 'me-auto bg-pink-600'
-	const paddingCSS = props.self ? 'ps-[100px]' : 'pe-[100px]'
+	const paddingCSS = props.self ? '' : 'pe-[100px]'
 
 	return (
 		<div className="w-full"
@@ -38,7 +38,7 @@ export default function MessagesList({ conversation, scrollBottom }: MessagesLis
 
 	useEffect(() => {
 		if (scrollBottom === true)
-			ref.current?.scrollTo({ top: ref.current?.scrollHeight, behavior: 'smooth' })
+			ref.current?.scrollTo({ top: ref.current?.scrollHeight, behavior: 'instant' })
 	}, [ref, scrollBottom])
 
 	if (conversation) {

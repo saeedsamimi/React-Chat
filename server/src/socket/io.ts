@@ -2,11 +2,12 @@ import { Server, Socket } from 'socket.io'
 import { Server as HTTPServer } from 'http'
 import { ExtendedError } from 'socket.io/dist/namespace'
 import Bearer from '../security/bearer'
-import { HydratedDocument, PopulatedDoc, ProjectionType, Types } from 'mongoose'
+import { Document, HydratedDocument, PopulatedDoc, ProjectionType, Types } from 'mongoose'
 import { IUserDocument } from '../models/user'
 import { logger } from '../config'
 import { IConversation } from '../models/conversation'
 import Controller from './controller'
+import { IMessage } from '../models/message'
 
 // **** helper types **** //
 
@@ -24,6 +25,12 @@ interface ClientToServerEvents {
 		(data: addParticipantData,                                      // the data of which participant to add and who want to add it
 		 callback: (user: HydratedDocument<IUserDocument>) => void      // the callback function for back-response for the acknowledgement
 		) => void;
+	addMessage:
+		(data: string,                                                  // the target message content
+		 conversationId: Types.ObjectId,                                // the target conversation id
+		 callback:                                                      // the callback function for back-response for the acknowledgement
+			 (message: PopulatedDoc<IMessage>) => void
+		) => void;
 }
 
 interface ServerToClientEvents {
@@ -39,6 +46,11 @@ interface ServerToClientEvents {
 		) => void;
 	participantAdded:
 		(data: participantAddedData            // the added participant data
+		) => void;
+	messageAdded:
+		(data: PopulatedDoc<IMessage>,         // the added message with populate(manually)
+		 conversationId: Types.ObjectId,       // the target conversation ID
+		 user: HydratedDocument<IUserDocument>
 		) => void;
 }
 
